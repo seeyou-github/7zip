@@ -42,22 +42,21 @@ jobs:
           New-Item -ItemType Directory -Path $packageRoot | Out-Null
 
           $files = @(
-            'CPP\7zip\UI\Console\x64\7z.exe',
-            'CPP\7zip\UI\FileManager\x64\7zFM.exe',
-            'CPP\7zip\UI\GUI\x64\7zG.exe',
-            'CPP\7zip\Bundles\Format7zF\x64\7z.dll',
-            'CPP\7zip\Bundles\SFXCon\x64\7zCon.sfx',
-            'CPP\7zip\Bundles\SFXSetup\x64\7zS.sfx',
-            'CPP\7zip\Bundles\SFXWin\x64\7z.sfx',
-            'License.txt',
-            'DOC\readme.txt'
+            @{ Source = 'CPP\7zip\UI\Console\x64\7z.exe'; Destination = '7z.exe' },
+            @{ Source = 'CPP\7zip\UI\FileManager\x64\7zFM.exe'; Destination = '7zFM.exe' },
+            @{ Source = 'CPP\7zip\UI\GUI\x64\7zG.exe'; Destination = '7zG.exe' },
+            @{ Source = 'CPP\7zip\Bundles\Format7zF\x64\7z.dll'; Destination = '7z.dll' },
+            @{ Source = 'CPP\7zip\Bundles\SFXCon\x64\7zCon.sfx'; Destination = '7zCon.sfx' },
+            @{ Source = 'CPP\7zip\Bundles\SFXSetup\x64\7zS.sfx'; Destination = '7zS.sfx' },
+            @{ Source = 'CPP\7zip\Bundles\SFXWin\x64\7z.sfx'; Destination = '7z.sfx' },
+            @{ Source = 'DOC\readme.txt'; Destination = 'readme.txt' }
           )
 
           foreach ($file in $files) {
-            if (-not (Test-Path $file)) {
-              throw "Missing expected build output: $file"
+            if (-not (Test-Path $file.Source)) {
+              throw "Missing expected build output: $($file.Source)"
             }
-            Copy-Item -LiteralPath $file -Destination $packageRoot
+            Copy-Item -LiteralPath $file.Source -Destination (Join-Path $packageRoot $file.Destination)
           }
 
           Compress-Archive -Path $packageRoot -DestinationPath $zipPath -CompressionLevel Optimal
